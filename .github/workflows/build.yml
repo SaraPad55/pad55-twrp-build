@@ -1,0 +1,29 @@
+name: Check TWRP Device Tree
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout device tree
+        uses: actions/checkout@v4
+
+      - name: Check required files
+        run: |
+          for f in BoardConfig.mk AndroidProducts.mk omni_k37mv1_bsp.mk device.mk recovery.fstab; do
+            if [ ! -f "$f" ]; then
+              echo "Missing: $f"
+              exit 1
+            fi
+          done
+          echo "Basic file check passed."
+
+      - name: Report build status
+        run: |
+          echo "This workflow only checks the device tree."
+          echo "It does not build or flash TWRP."
